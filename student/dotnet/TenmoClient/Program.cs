@@ -8,6 +8,7 @@ namespace TenmoClient
     {
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
+        private static readonly ApiService apiService = new ApiService();
 
         static void Main(string[] args)
         {
@@ -99,7 +100,25 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 4)
                 {
+                    ApiService api = new ApiService();
+                    List<User> allUsers = apiService.GetAllUsers();
+                    for (int i = 0; i < allUsers.Count; i++)
+                    {
+                        Console.WriteLine($"{allUsers[i].UserId}, {allUsers[i].Username}");
+                    }
+                    Console.WriteLine("Please select user by userId: ");
+                    string userId = Console.ReadLine();
+                    int userIdAsInt = Convert.ToInt32(userId);
 
+                    for (int i = 0; i < allUsers.Count; i++)
+                    {
+                        if (userIdAsInt == allUsers[i].UserId)
+                        {
+                            Console.WriteLine("Please enter the amount you would like to send: ");
+                            string amountResponse = Console.ReadLine();
+                            decimal amountToTransfer = Convert.ToDecimal(amountResponse);
+                        }
+                    }
                 }
                 else if (menuSelection == 5)
                 {
