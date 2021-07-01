@@ -8,8 +8,8 @@ namespace TenmoClient
     {
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
-        //private static readonly ApiService apiService = new ApiService();
-        private static readonly ApiService apiService = new ApiService("https://localhost:44315/"); //added this line of code
+        private static readonly ApiService apiService = new ApiService();
+        //private static readonly ApiService apiService = new ApiService("https://localhost:44315/"); //added this line of code
 
         static void Main(string[] args)
         {
@@ -90,7 +90,7 @@ namespace TenmoClient
                 else if (menuSelection == 1)
                 {
                     
-                   // int userId = UserService.GetUserId();
+                    //int userId = UserService.GetUserId();
                     decimal currentAccountBalance = apiService.GetAccountBalance(UserService.GetUserId());
                     Console.WriteLine($"Your current account balance is: {currentAccountBalance}");
                 }
@@ -105,7 +105,7 @@ namespace TenmoClient
                 else if (menuSelection == 4) //***OPTION 4 TO SEND TE BUCKS TO A USER ID***
                 {
                     //ApiService api = new ApiService(); //api variable not used anywhere else in code. commented out code
-                    List<User> allUsers = apiService.GetAllUsers();
+                    List<ApiUser> allUsers = apiService.GetAllUsers();
                     for (int i = 0; i < allUsers.Count; i++)
                     {
                         Console.WriteLine($"{allUsers[i].UserId}, {allUsers[i].Username}");
