@@ -12,11 +12,13 @@ namespace TenmoServer.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private static IUserDao userDao;
+        private IUserDao userDao;
+        private IAccountDao accountDao; //change made
 
-        public UserController(IUserDao _userDao)
+        public UserController(IUserDao _userDao, IAccountDao accountDao) //change made
         {
-            userDao = _userDao;
+            this.userDao = _userDao;
+            this.accountDao = accountDao; //change made
         }
 
         [HttpGet()]

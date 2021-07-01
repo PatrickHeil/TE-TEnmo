@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,15 @@ namespace TenmoServer.Controllers
     {
         private IAccountDao accountDao;
 
-        public AccountsController()
+        public AccountsController(IAccountDao _accountDao)
         {
-
+            this.accountDao = _accountDao;
         }
+        //public AccountsController()
+        //{
 
+        //}
+        
         [HttpGet("{userId}")]
         public decimal GetAccountBalance(int userId)
         {
