@@ -26,5 +26,7 @@ namespace TenmoServer.Controllers
             List<User> listOfAllUsers = userDao.GetUsersForMoneyTransfer();
             return listOfAllUsers;
         }
+
+
     }
 }
