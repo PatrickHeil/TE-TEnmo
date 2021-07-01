@@ -23,7 +23,7 @@ namespace TenmoServer.Controllers
         //{
 
         //}
-        
+
         [HttpGet("{userId}")]
         public decimal GetAccountBalance(int userId)
         {
@@ -32,6 +32,17 @@ namespace TenmoServer.Controllers
             return accountBalance;
         }
 
+        [HttpPut("{userId}")]
+        public void UpdateBalanceSender(int userId, decimal transferredCash)
+        {
+            accountDao.UpdateBalanceSender(userId, transferredCash);
+        }
+
+        [HttpPut("{userId}")]
+        public void UpdateBalanceRecipient(int userId, decimal transferredCash)
+        {
+            accountDao.UpdateBalanceRecipient(userId, transferredCash);
+        }
     }
 
 }
