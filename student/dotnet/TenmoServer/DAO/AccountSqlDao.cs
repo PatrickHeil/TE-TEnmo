@@ -7,7 +7,7 @@ using TenmoServer.Security.Models;
 
 namespace TenmoServer.DAO
 {
-    public class AccountSqlDao
+    public class AccountSqlDao : IAccountDao
     {
 
         private readonly string connectionString;
@@ -47,32 +47,32 @@ namespace TenmoServer.DAO
             return returnBalance;
         }
 
-        //public decimal UpdateBalanceSender(int userId, decimal transferredCash)
-        //{
+        public decimal UpdateBalanceSender(int userId, decimal transferredCash)
+        {
 
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
 
-        //            SqlCommand cmd = new SqlCommand("SELECT users.user_id, accounts.balance FROM dbo.accounts "
-        //                + "JOIN users ON accounts.user_id = users.user_id WHERE users.user_id = @user_id", conn);
-        //            cmd.Parameters.AddWithValue("@user_id", userId);
-        //            SqlDataReader reader = cmd.ExecuteReader();
+                    SqlCommand cmd = new SqlCommand("SELECT users.user_id, accounts.balance FROM dbo.accounts "
+                        + "JOIN users ON accounts.user_id = users.user_id WHERE users.user_id = @user_id", conn);
+                    cmd.Parameters.AddWithValue("@user_id", userId);
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-        //            while (reader.Read())
-        //            {
+                    while (reader.Read())
+                    {
 
-        //            }
-        //        }
-        //    }
-        //    catch (SqlException)
-        //    {
-        //        throw;
-        //    }
-        //    return accountBalance;
-        //}
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return accountBalance;
+        }
 
         private Account GetAccountFromReader(SqlDataReader reader)
         {
