@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TenmoClient.Models
 {
-    public class Account
+    public class ApiAccount
     {
         public int AccountId { get; set; }
         public int UserId { get; set; }

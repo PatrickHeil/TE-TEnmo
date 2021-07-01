@@ -9,6 +9,8 @@ namespace TenmoServer.DAO
     public interface IAccountDao
     {
         decimal GetBalance(int userId);
+        public void UpdateBalanceSender(int userId, decimal transferredCash);
+        public void UpdateBalanceRecipient(int userId, decimal transferredCash);
 
     }
 }
