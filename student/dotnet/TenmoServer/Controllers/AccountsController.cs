@@ -24,12 +24,22 @@ namespace TenmoServer.Controllers
 
         //}
 
+        //[HttpGet("{userId}")]
+        //public decimal GetAccountBalance(int userId)
+        //{
+        //    //get account balance by input userId
+        //    decimal accountBalance = accountDao.GetBalance(userId);
+        //    return accountBalance;
+        //}
+
         [HttpGet("{userId}")]
-        public decimal GetAccountBalance(int userId)
+        public Account GetAccount(int userId)
         {
+            Account account = accountDao.GetAccount(userId);
             //get account balance by input userId
-            decimal accountBalance = accountDao.GetBalance(userId);
-            return accountBalance;
+            //decimal accountBalance = accountDao.GetBalance(userId);
+            //return accountBalance;
+            return account;
         }
 
         [HttpPut("{userId}")]
@@ -38,11 +48,11 @@ namespace TenmoServer.Controllers
             accountDao.UpdateBalanceSender(userId, transferredCash);
         }
 
-        [HttpPut("{userId}")]
-        public void UpdateBalanceRecipient(int userId, decimal transferredCash)
-        {
-            accountDao.UpdateBalanceRecipient(userId, transferredCash);
-        }
+        //[HttpPut("{userId}")]
+        //public void UpdateBalanceRecipient(int userId, decimal transferredCash)
+        //{
+        //    accountDao.UpdateBalanceRecipient(userId, transferredCash);
+        //}
     }
 
 }
