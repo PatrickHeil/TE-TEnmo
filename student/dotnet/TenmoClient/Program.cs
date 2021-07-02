@@ -82,6 +82,7 @@ namespace TenmoClient
                 Console.WriteLine("0: Exit");
                 Console.WriteLine("---------");
                 Console.Write("Please choose an option: ");
+                
 
                 if (!int.TryParse(Console.ReadLine(), out menuSelection))
                 {
@@ -105,7 +106,7 @@ namespace TenmoClient
                 else if (menuSelection == 4) //***OPTION 4 TO SEND TE BUCKS TO A USER ID***
                 {
                     //ApiService api = new ApiService(); //api variable not used anywhere else in code. commented out code
-                    List<ApiUser> allUsers = apiService.GetAllUsers();
+                    List<User> allUsers = apiService.GetAllUsers();
                     for (int i = 0; i < allUsers.Count; i++)
                     {
                         Console.WriteLine($"{allUsers[i].UserId}, {allUsers[i].Username}");
@@ -118,9 +119,11 @@ namespace TenmoClient
                     {
                         if (userIdAsInt == allUsers[i].UserId)
                         {
+                            ApiAccount account = new ApiAccount(apiService.GetAccountBalance(userIdAsInt));
                             Console.WriteLine("Please enter the amount you would like to send: ");
                             string amountResponse = Console.ReadLine();
                             decimal amountToTransfer = Convert.ToDecimal(amountResponse);
+                            apiService.UpdateSenderAccount(account, amountToTransfer);
                         }
                     }
                 }
