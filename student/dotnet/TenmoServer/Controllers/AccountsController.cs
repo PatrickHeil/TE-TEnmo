@@ -14,6 +14,7 @@ namespace TenmoServer.Controllers
     public class AccountsController : Controller
     {
         private IAccountDao accountDao;
+        private ITransferDao transferDao;
 
         public AccountsController(IAccountDao _accountDao)
         {
@@ -42,17 +43,8 @@ namespace TenmoServer.Controllers
             return account;
         }
 
-        [HttpPut("{userId}")]
-        public void UpdateBalanceSender(int userId, decimal transferredCash)
-        {
-            accountDao.UpdateBalanceSender(userId, transferredCash);
-        }
 
-        //[HttpPut("{userId}")]
-        //public void UpdateBalanceRecipient(int userId, decimal transferredCash)
-        //{
-        //    accountDao.UpdateBalanceRecipient(userId, transferredCash);
-        //}
+
     }
 
 }
