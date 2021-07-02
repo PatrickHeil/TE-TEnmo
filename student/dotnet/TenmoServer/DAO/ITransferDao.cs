@@ -9,8 +9,8 @@ namespace TenmoServer.DAO
     public interface ITransferDao
     {
 
-        public void Transfer(int accountFrom, int accountTo, decimal transferredAmount);
-        public void UpdateBalanceSender(int accountId);
+        public void Transfer(Transfer transfer);
+        public void UpdateBalanceSender(Account account);
         public void UpdateBalanceRecipient(int accountId);
         public List<Transfer> GetTransfers();
 

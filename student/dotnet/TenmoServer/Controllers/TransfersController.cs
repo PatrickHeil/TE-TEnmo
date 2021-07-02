@@ -28,15 +28,16 @@ namespace TenmoServer.Controllers
         }
 
         [HttpPost("{accountFrom}")]
-        public void CreateTransfer(int accountFrom, int accountTo, decimal transferredAmount)
+        public void CreateTransfer(Transfer transfer)
         {
-            transferDao.Transfer(accountFrom, accountTo, transferredAmount);
+            transferDao.Transfer(transfer);
         }
 
-        [HttpPut("{accountFrom}")]
-        public void UpdateTransfer(int accountFrom, int accountTo, decimal transferredAmount)
+        [HttpPut("{userId}")]
+        public void UpdateAccount(Account account)
         {
-            transferDao.Transfer(accountFrom, accountTo, transferredAmount);
+
+            transferDao.UpdateBalanceSender(account);
         }
 
     }
