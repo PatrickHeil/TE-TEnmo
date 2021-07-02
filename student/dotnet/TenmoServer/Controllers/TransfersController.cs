@@ -14,10 +14,12 @@ namespace TenmoServer.Controllers
     public class TransfersController : Controller
     {
         private ITransferDao transferDao;
+        private IAccountDao accountDao;
 
-        public TransfersController(ITransferDao _transferDao)
+        public TransfersController(ITransferDao _transferDao, IAccountDao _accountDao)
         {
             this.transferDao = _transferDao;
+            this.accountDao = _accountDao;
         }
 
         [HttpGet]
@@ -34,11 +36,22 @@ namespace TenmoServer.Controllers
         }
 
         [HttpPut("{userId}")]
-        public void UpdateAccount(Account account)
+        public void UpdateAccount(Transfer transfer, Account account)
         {
-
-            transferDao.UpdateBalanceSender(account);
+            if(transfer.TransferStatusId == 2)
+            {
+                if(transfer.AccountFrom == account.AccountId)
+                {
+                    transferDao.UpdateBalanceSender(account);
+                }            
+            }
+            else if(transfer.TransferStatusId == 1)
+            {
+                if(transfer.AccountTo == account.AccountId)
+                {
+                    transferDao.UpdateBalanceRecipient(account);
+                }
+            }
         }
-
     }
 }
