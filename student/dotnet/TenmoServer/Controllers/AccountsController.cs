@@ -14,11 +14,12 @@ namespace TenmoServer.Controllers
     public class AccountsController : Controller
     {
         private IAccountDao accountDao;
-        private ITransferDao transferDao;
-
-        public AccountsController(IAccountDao _accountDao)
+        private readonly ITransferDao transferDao;
+        
+        public AccountsController(IAccountDao _accountDao, ITransferDao _transferDao)
         {
             this.accountDao = _accountDao;
+            this.transferDao = _transferDao;
         }
         //public AccountsController()
         //{
@@ -43,6 +44,33 @@ namespace TenmoServer.Controllers
             return account;
         }
 
+        [HttpGet]
+        public List<Account> GetAccounts()
+        {
+            List<Account> accounts = accountDao.GetAccounts();
+            return accounts;
+        }
+
+        [HttpGet("{userId}")]
+        public Account GetAccountByUserId(int userId)
+        {
+            Account account = accountDao.GetAccount(userId);
+            return account;
+        }
+
+        [HttpGet("{accountId}")]
+        public Account GetAccountByAccountId(int accountId)
+        {
+            Account account = accountDao.GetAccount(accountId);
+            return account;
+        }
+
+
+        [HttpPut("{accountId}")]
+        public void UpdateAccount(Account account)
+        {
+            transferDao.UpdateBalanceSender(account);
+        }
 
 
     }

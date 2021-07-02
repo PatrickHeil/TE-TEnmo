@@ -118,6 +118,31 @@ namespace TenmoServer.DAO
         //    }
         //}
 
+        public List<Account> GetAccounts()
+        {
+            List<Account> accounts = new List<Account>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT account_id, user_id, balance FROM dbo.accounts", conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        accounts.Add(GetAccountFromReader(reader));
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return accounts;
+        }
 
 
         private Account GetAccountFromReader(SqlDataReader reader)

@@ -11,13 +11,16 @@ namespace TenmoServer.DAO
     {
         private readonly string connectionString;
         //const decimal startingBalance = 1000;
+        //private static Transfer transfer;
+        private readonly Account account;
+        
 
         public TransferSqlDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
         }
 
-        public void Transfer(int accountFrom, int accountTo, decimal transferredAmount)
+        public void Transfer(Transfer transfer)
         {
             try
             {
@@ -26,10 +29,12 @@ namespace TenmoServer.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand("INSERT INTO dbo.transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) "
-                       + "VALUES(2, 1, @account_from, @account_to, @amount)", conn);
-                    cmd.Parameters.AddWithValue("@account_from", accountFrom);
-                    cmd.Parameters.AddWithValue("@account_to", accountTo);
-                    cmd.Parameters.AddWithValue("@amount", transferredAmount);
+                       + "VALUES(@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount)", conn);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transfer.TransferTypeId);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transfer.TransferStatusId);
+                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                    cmd.Parameters.AddWithValue("@amount", transfer.Amount);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -40,7 +45,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceSender(int accountId)
+        public void UpdateBalanceSender(Account account)
         {
             try
             {
@@ -48,9 +53,9 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE account_from = @@IDENTITY) " +
+                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
                         "WHERE account_id = (SELECT account_id FROM accounts WHERE account_id = @account_id)", conn);
-                    cmd.Parameters.AddWithValue("@account_id", accountId);
+                    cmd.Parameters.AddWithValue("@account_id", account.AccountId);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -69,7 +74,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE account_from = @@IDENTITY) " +
+                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
                         "WHERE account_id = (SELECT account_id FROM accounts WHERE account_id = @account_id)", conn);
                     cmd.Parameters.AddWithValue("@account_id", accountId);
 
@@ -114,7 +119,7 @@ namespace TenmoServer.DAO
             {
                 TransferId = Convert.ToInt32(reader["transfer_id"]),
                 TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]),
-                TransferStatus = Convert.ToInt32(reader["transfer_status_id"]),
+                TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]),
                 AccountFrom = Convert.ToInt32(reader["account_from"]),
                 AccountTo = Convert.ToInt32(reader["account_to"]),
                 Amount = Convert.ToDecimal(reader["amount"]),
