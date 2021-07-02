@@ -18,34 +18,34 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public decimal GetBalance(int userId)
-        {
-            decimal returnBalance = 0;
+        //public decimal GetBalance(int userId)
+        //{
+        //    decimal returnBalance = 0;
 
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT account_id, user_id, balance FROM dbo.accounts "
-                        + "WHERE user_id = @user_id", conn);
-                    cmd.Parameters.AddWithValue("@user_id", userId);
-                    SqlDataReader reader = cmd.ExecuteReader();
+        //            SqlCommand cmd = new SqlCommand("SELECT account_id, user_id, balance FROM dbo.accounts "
+        //                + "WHERE user_id = @user_id", conn);
+        //            cmd.Parameters.AddWithValue("@user_id", userId);
+        //            SqlDataReader reader = cmd.ExecuteReader();
 
-                    while (reader.Read())
-                    {
-                        Account balance = GetAccountFromReader(reader);
-                        returnBalance = balance.Balance;
-                    }
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-            return returnBalance;
-        }
+        //            while (reader.Read())
+        //            {
+        //                Account balance = GetAccountFromReader(reader);
+        //                returnBalance = balance.Balance;
+        //            }
+        //        }
+        //    }
+        //    catch (SqlException)
+        //    {
+        //        throw;
+        //    }
+        //    return returnBalance;
+        //}
 
         public Account GetAccount(int userId)
         {
@@ -75,48 +75,48 @@ namespace TenmoServer.DAO
             return account;
         }
 
-        public void UpdateBalanceSender(int userId, decimal transferredCash)
-        {
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
+        //public void UpdateBalanceSender(int userId, decimal transferredCash)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= @balance WHERE user_id = @user_id", conn);
-                    cmd.Parameters.AddWithValue("@user_id", userId);
-                    cmd.Parameters.AddWithValue("@balance", transferredCash);
+        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= @balance WHERE user_id = @user_id", conn);
+        //            cmd.Parameters.AddWithValue("@user_id", userId);
+        //            cmd.Parameters.AddWithValue("@balance", transferredCash);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }   
-        }
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (SqlException)
+        //    {
+        //        throw;
+        //    }   
+        //}
 
-        public void UpdateBalanceRecipient(int userId, decimal transferredCash)
-        {
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
+        //public void UpdateBalanceRecipient(int userId, decimal transferredCash)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += @balance WHERE user_id = @user_id", conn);
-                    cmd.Parameters.AddWithValue("@user_id", userId);
-                    cmd.Parameters.AddWithValue("@balance", transferredCash);
-                    SqlDataReader reader = cmd.ExecuteReader();
+        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += @balance WHERE user_id = @user_id", conn);
+        //            cmd.Parameters.AddWithValue("@user_id", userId);
+        //            cmd.Parameters.AddWithValue("@balance", transferredCash);
+        //            SqlDataReader reader = cmd.ExecuteReader();
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-        }
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (SqlException)
+        //    {
+        //        throw;
+        //    }
+        //}
 
 
 
