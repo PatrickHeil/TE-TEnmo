@@ -12,6 +12,7 @@ namespace TenmoClient
         private readonly static string API_URL = "https://localhost:44315/";
         private readonly IRestClient restClient;
         private static ApiUser user = new ApiUser();
+        private static ApiAccount account = new ApiAccount();
         public ApiService()
         {
             restClient = new RestClient();
@@ -21,20 +22,20 @@ namespace TenmoClient
             restClient = this.restClient;
         }
 
-        public List<ApiUser> GetAllUsers()
+        public List<User> GetAllUsers()
         {
             RestRequest request = new RestRequest(API_URL + "user");
-            IRestResponse<List<ApiUser>> response = restClient.Get<List<ApiUser>>(request);
+            IRestResponse<List<User>> response = restClient.Get<List<User>>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
-                return response.Data;
+                throw new Exception();
             }
-            
-            return null;
+
+            return response.Data;
         }
 
-        public decimal GetAccountBalance(int userId) //COME BACK TO THIS PROBLEM
+        public decimal GetAccountBalance(int userId)
         {
             RestRequest request = new RestRequest(API_URL + "accounts/" + userId.ToString());
             IRestResponse<decimal> response = restClient.Get<decimal>(request);
@@ -47,32 +48,39 @@ namespace TenmoClient
             return response.Data;
         }
 
-        public decimal UpdateSenderAccount(ApiAccount senderBalance, decimal cash)
+        public decimal UpdateSenderAccount(ApiAccount senderAccount, decimal cash)
         {
-            RestRequest request = new RestRequest(API_URL + "accounts/" + senderBalance.UserId.ToString());
+            senderAccount.Balance -= cash;
+            RestRequest request = new RestRequest(API_URL + "accounts/" + senderAccount.UserId.ToString());
+            request.AddJsonBody(senderAccount);
             IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
-            request.AddJsonBody(senderBalance.Balance - cash);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
                 throw new Exception();
             }
 
-            return senderBalance.Balance;
+            return senderAccount.Balance;
         }
 
         public decimal UpdateRecipientAccount(ApiAccount recipientBalance, decimal cash)
         {
+            recipientBalance.Balance += cash;
             RestRequest request = new RestRequest(API_URL + "accounts/" + recipientBalance.UserId.ToString());
-            IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
             request.AddJsonBody(recipientBalance.Balance + cash);
-
+            IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
+           
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
                 throw new Exception();
             }
 
             return recipientBalance.Balance;
+        }
+
+        public static int GetAccountId()
+        {
+            return account.AccountId;
         }
 
     }

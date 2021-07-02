@@ -16,6 +16,8 @@ namespace TenmoClient
             return user.UserId;
         }
 
+
+
         public static bool IsLoggedIn()
         {
             return !string.IsNullOrWhiteSpace(user.Token);
