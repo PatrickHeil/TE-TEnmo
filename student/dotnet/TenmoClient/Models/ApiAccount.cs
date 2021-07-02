@@ -7,8 +7,7 @@ namespace TenmoClient.Models
     
     public class ApiAccount
     {
-        
-
+        private static ApiService apiService = new ApiService();
         public int AccountId { get; set; }
         public int UserId { get; set; }
         public decimal Balance { get; set; }
@@ -21,8 +20,9 @@ namespace TenmoClient.Models
         public ApiAccount(decimal balance)
         {
             this.Balance = balance;
-            this.AccountId = ApiService.GetAccountId();
+            //this.AccountId = ApiService.GetAccountIdByUserId();
             this.UserId = UserService.GetUserId();
+            this.AccountId = apiService.GetAccountIdByUserId(this.UserId);
         }
 
     //public Account(int userId, decimal balance)

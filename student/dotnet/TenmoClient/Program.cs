@@ -92,7 +92,7 @@ namespace TenmoClient
                 {
                     
                     //int userId = UserService.GetUserId();
-                    decimal currentAccountBalance = apiService.GetAccountBalance(UserService.GetUserId());
+                    decimal currentAccountBalance = apiService.GetAccount(UserService.GetUserId()).Balance;
                     Console.WriteLine($"Your current account balance is: {currentAccountBalance}");
                 }
                 else if (menuSelection == 2)
@@ -119,7 +119,7 @@ namespace TenmoClient
                     {
                         if (userIdAsInt == allUsers[i].UserId)
                         {
-                            ApiAccount account = new ApiAccount(apiService.GetAccountBalance(userIdAsInt));
+                            ApiAccount account = new ApiAccount(apiService.GetAccount(userIdAsInt).Balance);
                             Console.WriteLine("Please enter the amount you would like to send: ");
                             string amountResponse = Console.ReadLine();
                             decimal amountToTransfer = Convert.ToDecimal(amountResponse);
