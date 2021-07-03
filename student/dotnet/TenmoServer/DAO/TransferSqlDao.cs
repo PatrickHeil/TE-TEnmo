@@ -19,6 +19,11 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
+        public TransferSqlDao(Account account)
+        {
+            this.account = account;
+        }
+
         public void Transfer(Transfer transfer)
         {
             try
@@ -53,7 +58,7 @@ namespace TenmoServer.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
-                        "WHERE account_id = (SELECT account_id FROM accounts WHERE account_id = @account_id)", conn);
+                        "WHERE account_id = @account_id", conn);
                     cmd.Parameters.AddWithValue("@account_id", account.AccountId);
 
                     cmd.ExecuteNonQuery();
@@ -74,7 +79,7 @@ namespace TenmoServer.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
-                        "WHERE account_id = (SELECT account_id FROM accounts WHERE account_id = @account_id)", conn);
+                        "WHERE account_id = @account_id", conn);
                     cmd.Parameters.AddWithValue("@account_id", account.AccountId);
 
                     cmd.ExecuteNonQuery();
@@ -110,6 +115,63 @@ namespace TenmoServer.DAO
                 throw;
             }
             return transferList;
+        }
+
+        public List<Transfer> GetTransfersOfUser(int userId)
+        {
+            List<Transfer> transferList = new List<Transfer>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+                        "FROM dbo.transfers JOIN accounts ON accounts.account_id = transfers.account_from " +
+                                "WHERE user_id = @userId", conn);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        transferList.Add(GetTransferFromReader(reader));
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return transferList;
+        }
+
+        public Transfer GetTransferByTransferId(int transferId)
+        {
+            Transfer desiredTransfer = new Transfer();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+                        "FROM dbo.transfers WHERE transfer_id = @transferId", conn);
+                    cmd.Parameters.AddWithValue("@transferId", transferId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        desiredTransfer = GetTransferFromReader(reader);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return desiredTransfer;
         }
 
         private Transfer GetTransferFromReader(SqlDataReader reader)
