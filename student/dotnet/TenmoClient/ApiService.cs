@@ -46,7 +46,26 @@ namespace TenmoClient
             {
                 throw new Exception();
             }
-            return response.Data;
+            else
+            {
+                return response.Data;
+            }
+        }
+
+        public decimal GetAccountBalance(int userId)
+        {
+            RestRequest request = new RestRequest(API_URL + "accounts/" + userId.ToString());
+            IRestResponse<ApiAccount> response = restClient.Get<ApiAccount>(request);
+            //request.AddJsonBody(userId);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                return response.Data.Balance;
+            }
         }
 
         public int GetAccountIdByUserId(int userId)
@@ -88,11 +107,22 @@ namespace TenmoClient
             return response.Data;
         }
 
-        public void UpdateSenderAccount(ApiAccount senderAccount, decimal cash)
+        public ApiTransfer GetLatestTransfer(int userId)
         {
-            senderAccount.Balance -= cash;
-            RestRequest request = new RestRequest(API_URL + "accounts/" + senderAccount.UserId.ToString());
-            request.AddJsonBody(senderAccount);
+            RestRequest request = new RestRequest(API_URL + "transfers/" + "transfer" + userId.ToString());
+            IRestResponse<ApiTransfer> response = restClient.Get<ApiTransfer>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception();
+            }
+            return response.Data;
+        }
+
+        public void UpdateSenderAccount(ApiTransfer transfer)
+        {
+            RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.AccountFrom);
+            request.AddJsonBody(transfer);
             IRestResponse response = restClient.Put(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
@@ -101,26 +131,36 @@ namespace TenmoClient
             }
         }
 
-        public decimal UpdateRecipientAccount(ApiAccount recipientBalance, decimal cash)
+        public void UpdateRecipientAccount(ApiTransfer transfer)
         {
-            recipientBalance.Balance += cash;
-            RestRequest request = new RestRequest(API_URL + "accounts/" + recipientBalance.UserId.ToString());
-            request.AddJsonBody(recipientBalance.Balance + cash);
+            RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.AccountTo);
+            request.AddJsonBody(transfer);
             IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
-           
+
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
                 throw new Exception();
             }
-
-            return recipientBalance.Balance;
         }
+
+        public void PostNewTransferToDatabase(ApiTransfer apiTransfer)
+        {
+            RestRequest request = new RestRequest(API_URL + "transfers/" + apiTransfer.TransferId.ToString());
+            request.AddJsonBody(apiTransfer);
+            IRestResponse<ApiTransfer> response = restClient.Post<ApiTransfer>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception();
+            }        
+        }
+
+
 
         public static int GetAccountId()
         {
             return apiService.GetAccount(user.UserId).AccountId;
         }
-
     }
 }
 

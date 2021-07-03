@@ -9,7 +9,7 @@ using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("/")]
     [ApiController]
     public class AccountsController : Controller
     {
@@ -29,14 +29,14 @@ namespace TenmoServer.Controllers
             return accounts;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("accounts/{userId}")]
         public Account GetAccountByUserId(int userId)
         {
             Account account = accountDao.GetAccount(userId);
             return account;
         }
 
-        [HttpGet("{accountId}")]
+        [HttpGet("accounts/account{accountId}")]
         public Account GetAccountByAccountId(int accountId)
         {
             Account account = accountDao.GetAccount(accountId);
@@ -44,11 +44,14 @@ namespace TenmoServer.Controllers
         }
 
 
-        [HttpPut("{accountId}")]
-        public void UpdateAccount(Account account)
+        [HttpPut("accounts/{accountId}")]
+        public void UpdateAccount(Transfer transfer)
         {
-            transferDao.UpdateBalanceSender(account);
+            transferDao.UpdateBalanceSender(transfer.AccountFrom);
+            transferDao.UpdateBalanceRecipient(transfer.AccountTo);
         }
+
+        
 
         //public AccountsController()
         //{

@@ -49,7 +49,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceSender(Account account)
+        public void UpdateBalanceSender(int accountId)
         {
             try
             {
@@ -57,9 +57,9 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
-                        "WHERE account_id = @account_id", conn);
-                    cmd.Parameters.AddWithValue("@account_id", account.AccountId);
+                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = " +
+                        "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+                    cmd.Parameters.AddWithValue("@account_id", accountId);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -70,7 +70,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceRecipient(Account account)
+        public void UpdateBalanceRecipient(int accountId)
         {
             try
             {
@@ -78,9 +78,9 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
-                        "WHERE account_id = @account_id", conn);
-                    cmd.Parameters.AddWithValue("@account_id", account.AccountId);
+                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
+                        "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+                    cmd.Parameters.AddWithValue("@account_id", accountId);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -90,6 +90,48 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
+
+        //public void UpdateBalanceSender(Account account)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+
+        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = " +
+        //                "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+        //            cmd.Parameters.AddWithValue("@account_id", account.AccountId);
+
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (SqlException)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        //public void UpdateBalanceRecipient(Account account)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+
+        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
+        //                "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+        //            cmd.Parameters.AddWithValue("@account_id", account.AccountId);
+
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (SqlException)
+        //    {
+        //        throw;
+        //    }
+        //}
 
         public List<Transfer> GetTransfers()
         {
@@ -116,6 +158,7 @@ namespace TenmoServer.DAO
             }
             return transferList;
         }
+
 
         public List<Transfer> GetTransfersOfUser(int userId)
         {
@@ -144,6 +187,43 @@ namespace TenmoServer.DAO
                 throw;
             }
             return transferList;
+        }
+
+        public Transfer GetLastTransferOfUser(int userId)
+        {
+            List<Transfer> transferList = new List<Transfer>();
+            Transfer transfer = new Transfer();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+                        "FROM dbo.transfers JOIN accounts ON accounts.account_id = transfers.account_from " +
+                                "WHERE user_id = @userId", conn);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        transferList.Add(GetTransferFromReader(reader));    
+                    }
+                    for(int i = 0; i<transferList.Count; i++)
+                    {
+                        if (i == transferList.Count - 1)
+                        {
+                            transfer = transferList[i];
+                        }
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return transfer;
         }
 
         public Transfer GetTransferByTransferId(int transferId)

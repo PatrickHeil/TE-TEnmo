@@ -9,7 +9,7 @@ using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("transfers/")]
     [ApiController]
     public class TransfersController : Controller
     {
@@ -47,6 +47,13 @@ namespace TenmoServer.Controllers
         public void CreateTransfer(Transfer transfer)
         {
             transferDao.Transfer(transfer);
+        }
+
+        [HttpGet("{userId}")]
+        public Transfer GetLastTransferByUserId(int userId)
+        {
+            Transfer lastTransfer = transferDao.GetLastTransferOfUser(userId);
+            return lastTransfer;
         }
 
         //[HttpPut("{userId}")]
