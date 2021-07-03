@@ -13,7 +13,7 @@ namespace TenmoServer.DAO
         //const decimal startingBalance = 1000;
         //private static Transfer transfer;
         private readonly Account account;
-        
+
         public TransferSqlDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
@@ -49,7 +49,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceSender(int accountId)
+        public void UpdateBalances(Transfer transfer)
         {
             try
             {
@@ -57,11 +57,17 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = " +
+                    SqlCommand send = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = " +
                         "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
-                    cmd.Parameters.AddWithValue("@account_id", accountId);
+                    send.Parameters.AddWithValue("@account_id", transfer.AccountFrom);
 
-                    cmd.ExecuteNonQuery();
+                    send.ExecuteNonQuery();
+
+                    SqlCommand receive = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
+                        "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+                    receive.Parameters.AddWithValue("@account_id", transfer.AccountTo);
+
+                    receive.ExecuteNonQuery();
                 }
             }
             catch (SqlException)
@@ -70,26 +76,26 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceRecipient(int accountId)
-        {
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
+        //public void UpdateBalanceRecipient(int accountId)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
-                        "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
-                    cmd.Parameters.AddWithValue("@account_id", accountId);
+        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
+        //                "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+        //            cmd.Parameters.AddWithValue("@account_id", accountId);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-        }
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (SqlException)
+        //    {
+        //        throw;
+        //    }
+        //}
 
         //public void UpdateBalanceSender(Account account)
         //{
@@ -208,9 +214,9 @@ namespace TenmoServer.DAO
 
                     while (reader.Read())
                     {
-                        transferList.Add(GetTransferFromReader(reader));    
+                        transferList.Add(GetTransferFromReader(reader));
                     }
-                    for(int i = 0; i<transferList.Count; i++)
+                    for (int i = 0; i < transferList.Count; i++)
                     {
                         if (i == transferList.Count - 1)
                         {
@@ -269,4 +275,3 @@ namespace TenmoServer.DAO
         }
     }
 }
-    

@@ -44,11 +44,11 @@ namespace TenmoServer.Controllers
         }
 
 
-        [HttpPut("accounts/{accountId}")]
+        [HttpPut("accounts/{transferId}")]
         public void UpdateAccount(Transfer transfer)
         {
-            transferDao.UpdateBalanceSender(transfer.AccountFrom);
-            transferDao.UpdateBalanceRecipient(transfer.AccountTo);
+            transferDao.UpdateBalances(transfer);
+            //transferDao.UpdateBalanceRecipient(transfer.AccountTo);
         }
 
         

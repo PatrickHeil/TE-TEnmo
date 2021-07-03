@@ -104,7 +104,7 @@ namespace TenmoClient
                     {
                         //Add labels
                         Console.WriteLine($"Transfer Id: {pastTransfers[i].TransferId}, Transfer Type Id: {pastTransfers[i].TransferTypeId}, Transfer Status Id: {pastTransfers[i].TransferStatusId}, " + 
-                            $"Account From: {pastTransfers[i].AccountFrom}, Account To: {pastTransfers[i].AccountTo}, Amount: {pastTransfers[i].Amount}");
+                            $"Sender: {pastTransfers[i].AccountFrom}, Recipient: {pastTransfers[i].AccountTo}, Amount: {pastTransfers[i].Amount}");
                     }
                 }
                 else if (menuSelection == 3)
@@ -114,7 +114,7 @@ namespace TenmoClient
                     int desiredTransferId = Convert.ToInt32(Console.ReadLine());
                     ApiTransfer desiredTransfer = apiService.GetTransferByTransferId(desiredTransferId);
                     Console.WriteLine($"Transfer Id: {desiredTransfer.TransferId}, Transfer Type Id: {desiredTransfer.TransferTypeId}, Transfer Status Id: {desiredTransfer.TransferStatusId}, " +
-                        "Account From: {desiredTransfer.AccountFrom}, Account To: {desiredTransfer.AccountTo}, Amount: {desiredTransfer.Amount}");
+                        $"Sender: {desiredTransfer.AccountFrom}, Recipient: {desiredTransfer.AccountTo}, Amount: {desiredTransfer.Amount}");
                 }
                 else if (menuSelection == 4) 
                 {
@@ -148,8 +148,8 @@ namespace TenmoClient
                             apiService.PostNewTransferToDatabase(newTransfer);
                             ////int lastTransfer = apiService.GetLatestTransfer(UserService.GetUserId()).TransferId;
 
-                            apiService.UpdateSenderAccount(newTransfer);
-                            apiService.UpdateRecipientAccount(newTransfer);
+                            apiService.UpdateAccounts(newTransfer);
+                            //apiService.UpdateRecipientAccount(newTransfer);
                         }
                     }
                 }

@@ -119,9 +119,9 @@ namespace TenmoClient
             return response.Data;
         }
 
-        public void UpdateSenderAccount(ApiTransfer transfer)
+        public void UpdateAccounts(ApiTransfer transfer)
         {
-            RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.AccountFrom);
+            RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.TransferId);
             request.AddJsonBody(transfer);
             IRestResponse response = restClient.Put(request);
 
@@ -131,17 +131,17 @@ namespace TenmoClient
             }
         }
 
-        public void UpdateRecipientAccount(ApiTransfer transfer)
-        {
-            RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.AccountTo);
-            request.AddJsonBody(transfer);
-            IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
+        //public void UpdateRecipientAccount(ApiTransfer transfer)
+        //{
+        //    RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.AccountTo);
+        //    request.AddJsonBody(transfer);
+        //    IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
 
-            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
-            {
-                throw new Exception();
-            }
-        }
+        //    if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+        //    {
+        //        throw new Exception();
+        //    }
+        //}
 
         public void PostNewTransferToDatabase(ApiTransfer apiTransfer)
         {
