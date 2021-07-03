@@ -14,7 +14,6 @@ namespace TenmoServer.DAO
         //private static Transfer transfer;
         private readonly Account account;
         
-
         public TransferSqlDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
@@ -66,7 +65,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceRecipient(int accountId)
+        public void UpdateBalanceRecipient(Account account)
         {
             try
             {
@@ -76,7 +75,7 @@ namespace TenmoServer.DAO
 
                     SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
                         "WHERE account_id = (SELECT account_id FROM accounts WHERE account_id = @account_id)", conn);
-                    cmd.Parameters.AddWithValue("@account_id", accountId);
+                    cmd.Parameters.AddWithValue("@account_id", account.AccountId);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -124,11 +123,8 @@ namespace TenmoServer.DAO
                 AccountTo = Convert.ToInt32(reader["account_to"]),
                 Amount = Convert.ToDecimal(reader["amount"]),
             };
-
             return transfer;
-
         }
-
     }
 }
     
