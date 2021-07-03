@@ -29,17 +29,31 @@ namespace TenmoServer.Controllers
             return listOfTransfers;
         }
 
+        [HttpGet("user{userId}")]
+        public List<Transfer> GetTransfersOfUser(int userId)
+        {
+            List<Transfer> listOfTransfers = transferDao.GetTransfersOfUser(userId);
+            return listOfTransfers;
+        }
+
+        [HttpGet("transfer{transferId}")]
+        public Transfer GetTransferByTransferId(int transferId)
+        {
+            Transfer desiredTransfer = transferDao.GetTransferByTransferId(transferId);
+            return desiredTransfer;
+        }
+
         [HttpPost("{accountFrom}")]
         public void CreateTransfer(Transfer transfer)
         {
             transferDao.Transfer(transfer);
         }
 
-        [HttpPut("{userId}")]
-        public void UpdateAccount(Account account)
-        {
-            transferDao.UpdateBalanceSender(account);
-        }
+        //[HttpPut("{userId}")]
+        //public void UpdateAccount(Account account)
+        //{
+        //    transferDao.UpdateBalanceSender(account);
+        //}
 
         //[HttpPut("{userId}")]
         //public void UpdateAccount(Transfer transfer, Account account)

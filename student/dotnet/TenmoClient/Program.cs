@@ -75,10 +75,11 @@ namespace TenmoClient
                 Console.WriteLine("Welcome to TEnmo! Please make a selection: ");
                 Console.WriteLine("1: View your current balance");
                 Console.WriteLine("2: View your past transfers");
-                Console.WriteLine("3: View your pending requests"); //this is optional use case #8
-                Console.WriteLine("4: Send TE bucks");
-                Console.WriteLine("5: Request TE bucks"); //this is optional use case #7
-                Console.WriteLine("6: Log in as different user");
+                Console.WriteLine("3: View Specified Transfer");
+                Console.WriteLine("4: View your pending requests"); //this is optional use case #8
+                Console.WriteLine("5: Send TE bucks");
+                Console.WriteLine("6: Request TE bucks"); //this is optional use case #7
+                Console.WriteLine("7: Log in as different user");
                 Console.WriteLine("0: Exit");
                 Console.WriteLine("---------");
                 Console.Write("Please choose an option: ");
@@ -90,20 +91,34 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 1)
                 {
-                    
                     //int userId = UserService.GetUserId();
                     decimal currentAccountBalance = apiService.GetAccount(UserService.GetUserId()).Balance;
                     Console.WriteLine($"Your current account balance is: {currentAccountBalance}");
                 }
                 else if (menuSelection == 2)
                 {
-
+                    List<ApiTransfer> pastTransfers = apiService.GetTransfersOfUser(UserService.GetUserId());
+                    Console.WriteLine("List of All Transfers: ");
+                    Console.WriteLine();
+                    for (int i = 0; i < pastTransfers.Count; i++)
+                    {
+                        //Add labels
+                        Console.WriteLine($"{pastTransfers[i].TransferId}, {pastTransfers[i].TransferTypeId}, {pastTransfers[i].TransferStatusId}, {pastTransfers[i].AccountFrom}, {pastTransfers[i].AccountTo}, {pastTransfers[i].Amount}");
+                    }
                 }
                 else if (menuSelection == 3)
                 {
-
+                    Console.WriteLine("Please enter the desired transfer ID: ");
+                    Console.WriteLine();
+                    int desiredTransferId = Convert.ToInt32(Console.ReadLine());
+                    ApiTransfer desiredTransfer = apiService.GetTransferByTransferId(desiredTransferId);
+                    Console.WriteLine($"{desiredTransfer.TransferId}, {desiredTransfer.TransferTypeId}, {desiredTransfer.TransferStatusId}, {desiredTransfer.AccountFrom}, {desiredTransfer.AccountTo}, {desiredTransfer.Amount}");
                 }
-                else if (menuSelection == 4) //***OPTION 4 TO SEND TE BUCKS TO A USER ID***
+                else if (menuSelection == 4) 
+                {
+                    
+                }
+                else if (menuSelection == 5) //***OPTION 4 TO SEND TE BUCKS TO A USER ID***
                 {
                     //ApiService api = new ApiService(); //api variable not used anywhere else in code. commented out code
                     List<User> allUsers = apiService.GetAllUsers();
@@ -127,11 +142,11 @@ namespace TenmoClient
                         }
                     }
                 }
-                else if (menuSelection == 5)
-                {
-
-                }
                 else if (menuSelection == 6)
+                {
+                    
+                }
+                else if (menuSelection == 7)
                 {
                     Console.WriteLine("");
                     UserService.SetLogin(new ApiUser()); //wipe out previous login info

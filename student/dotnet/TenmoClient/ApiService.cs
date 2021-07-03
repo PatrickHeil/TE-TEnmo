@@ -62,6 +62,32 @@ namespace TenmoClient
             return response.Data.AccountId;
         }
 
+        public List<ApiTransfer> GetTransfersOfUser(int userId)
+        {
+            RestRequest request = new RestRequest(API_URL + "transfers/" + "user" + userId.ToString());
+            IRestResponse<List<ApiTransfer>> response = restClient.Get<List<ApiTransfer>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception();
+            }
+
+            return response.Data;
+        }
+
+        public ApiTransfer GetTransferByTransferId(int transferId)
+        {
+            RestRequest request = new RestRequest(API_URL + "transfers/" + "transfer" + transferId.ToString());
+            IRestResponse<ApiTransfer> response = restClient.Get<ApiTransfer>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception();
+            }
+
+            return response.Data;
+        }
+
         public void UpdateSenderAccount(ApiAccount senderAccount, decimal cash)
         {
             senderAccount.Balance -= cash;
