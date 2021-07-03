@@ -14,12 +14,12 @@ namespace TenmoServer.Controllers
     public class TransfersController : Controller
     {
         private ITransferDao transferDao;
-        private IAccountDao accountDao;
+        //private IAccountDao accountDao;
 
-        public TransfersController(ITransferDao _transferDao, IAccountDao _accountDao)
+        public TransfersController(ITransferDao _transferDao/*, IAccountDao _accountDao*/)
         {
             this.transferDao = _transferDao;
-            this.accountDao = _accountDao;
+            //this.accountDao = _accountDao;
         }
 
         [HttpGet]
@@ -36,22 +36,30 @@ namespace TenmoServer.Controllers
         }
 
         [HttpPut("{userId}")]
-        public void UpdateAccount(Transfer transfer, Account account)
+        public void UpdateAccount(Account account)
         {
-            if(transfer.TransferStatusId == 2)
-            {
-                if(transfer.AccountFrom == account.AccountId)
-                {
-                    transferDao.UpdateBalanceSender(account);
-                }            
-            }
-            else if(transfer.TransferStatusId == 1)
-            {
-                if(transfer.AccountTo == account.AccountId)
-                {
-                    transferDao.UpdateBalanceRecipient(account);
-                }
-            }
+            transferDao.UpdateBalanceSender(account);
         }
+
+        //[HttpPut("{userId}")]
+        //public void UpdateAccount(Transfer transfer, Account account)
+        //{
+        //    if(transfer.TransferStatusId == 2)
+        //    {
+        //        if(transfer.AccountFrom == account.AccountId)
+        //        {
+        //            transferDao.UpdateBalanceSender(account);
+        //        }            
+        //    }
+        //    else if(transfer.TransferStatusId == 1)
+        //    {
+        //        if(transfer.AccountTo == account.AccountId)
+        //        {
+        //            transferDao.UpdateBalanceRecipient(account);
+        //        }
+        //    }
+        //}
+
+
     }
 }
