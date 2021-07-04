@@ -132,14 +132,17 @@ namespace TenmoClient
                     Console.WriteLine("Please select user by userId: ");
                     string userId = Console.ReadLine();
                     int userIdAsInt = Convert.ToInt32(userId);
-
+                    if(userIdAsInt == UserService.GetUserId())
+                    {
+                        break;
+                    }
                     
                     for (int i = 0; i < allUsers.Count; i++)
                     {
                         if (userIdAsInt == allUsers[i].UserId)
                         {
-                            ApiAccount senderAccount = new ApiAccount(apiService.GetAccount(UserService.GetUserId()).Balance);
-                            ApiAccount recipientAccount = new ApiAccount(apiService.GetAccount(userIdAsInt).Balance);
+                            //ApiAccount senderAccount = new ApiAccount(apiService.GetAccount(UserService.GetUserId()).Balance);
+                            //ApiAccount recipientAccount = new ApiAccount(apiService.GetAccount(userIdAsInt).Balance);
                             Console.WriteLine("Please enter the amount you would like to send: ");
                             string amountResponse = Console.ReadLine();
                             decimal amountToTransfer = Convert.ToDecimal(amountResponse);
@@ -151,6 +154,7 @@ namespace TenmoClient
                             apiService.UpdateAccounts(newTransfer);
                             //apiService.UpdateRecipientAccount(newTransfer);
                         }
+                        
                     }
                 }
                 else if (menuSelection == 6)
