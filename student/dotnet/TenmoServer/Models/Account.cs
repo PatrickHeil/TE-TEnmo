@@ -15,15 +15,6 @@ namespace TenmoServer.Models
         {
 
         }
-
-
-        //public Account(int userId, decimal balance)
-        //{
-        //    this.UserId = userId;
-        //    this.Balance = balance;
-        //}
-
-
     }
 
 }

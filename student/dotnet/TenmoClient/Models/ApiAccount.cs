@@ -20,17 +20,8 @@ namespace TenmoClient.Models
         public ApiAccount(decimal balance)
         {
             this.Balance = balance;
-            //this.AccountId = ApiService.GetAccountId();
             this.UserId = UserService.GetUserId();
             this.AccountId = apiService.GetAccountIdByUserId(this.UserId);
         }
-
-    //public Account(int userId, decimal balance)
-    //{
-    //    this.UserId = userId;
-    //    this.Balance = balance;
-    //}
-
-
     }
 }

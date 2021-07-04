@@ -9,7 +9,6 @@ namespace TenmoClient
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
         private static readonly ApiService apiService = new ApiService();
-        //private static readonly ApiService apiService = new ApiService("https://localhost:44315/"); //added this line of code
 
         static void Main(string[] args)
         {
@@ -91,18 +90,19 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 1)
                 {
-                    //int userId = UserService.GetUserId();
                     decimal currentAccountBalance = apiService.GetAccount(UserService.GetUserId()).Balance;
+                    Console.WriteLine();
                     Console.WriteLine($"Your current account balance is: {currentAccountBalance}");
+                    Console.WriteLine();
                 }
                 else if (menuSelection == 2)
                 {
                     List<ApiTransfer> pastTransfers = apiService.GetTransfersOfUser(UserService.GetUserId());
+                    Console.WriteLine();
                     Console.WriteLine("List of All Transfers: ");
                     Console.WriteLine();
                     for (int i = 0; i < pastTransfers.Count; i++)
                     {
-                        //Add labels
                         Console.WriteLine($"Transfer Id: {pastTransfers[i].TransferId}, Transfer Type Id: {pastTransfers[i].TransferTypeId}, Transfer Status Id: {pastTransfers[i].TransferStatusId}, " + 
                             $"Sender: {pastTransfers[i].AccountFrom}, Recipient: {pastTransfers[i].AccountTo}, Amount: {pastTransfers[i].Amount}");
                     }
@@ -113,8 +113,13 @@ namespace TenmoClient
                     Console.WriteLine();
                     int desiredTransferId = Convert.ToInt32(Console.ReadLine());
                     ApiTransfer desiredTransfer = apiService.GetTransferByTransferId(desiredTransferId);
-                    Console.WriteLine($"Transfer Id: {desiredTransfer.TransferId}, Transfer Type Id: {desiredTransfer.TransferTypeId}, Transfer Status Id: {desiredTransfer.TransferStatusId}, " +
-                        $"Sender: {desiredTransfer.AccountFrom}, Recipient: {desiredTransfer.AccountTo}, Amount: {desiredTransfer.Amount}");
+                    Console.WriteLine();
+                    Console.WriteLine($"Transfer Id: {desiredTransfer.TransferId}");
+                    Console.WriteLine($"Transfer Type Id: {desiredTransfer.TransferTypeId}");
+                    Console.WriteLine($"Transfer Status Id: {desiredTransfer.TransferStatusId}");
+                    Console.WriteLine($"Sender: {desiredTransfer.AccountFrom}");
+                    Console.WriteLine($"Recipient: {desiredTransfer.AccountTo}");
+                    Console.WriteLine($"Amount: {desiredTransfer.Amount}");
                 }
                 else if (menuSelection == 4) 
                 {
@@ -122,39 +127,49 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 5) //***OPTION 4 TO SEND TE BUCKS TO A USER ID***
                 {
-                    //ApiTransfer transfer = new ApiTransfer();
-                    //ApiService api = new ApiService(); //api variable not used anywhere else in code. commented out code
                     List<User> allUsers = apiService.GetAllUsers();
                     for (int i = 0; i < allUsers.Count; i++)
                     {
                         Console.WriteLine($"{allUsers[i].UserId}, {allUsers[i].Username}");
                     }
+                    Console.WriteLine();
                     Console.WriteLine("Please select user by userId: ");
                     string userId = Console.ReadLine();
                     int userIdAsInt = Convert.ToInt32(userId);
-                    if(userIdAsInt == UserService.GetUserId())
-                    {
-                        break;
-                    }
-                    
+
+
                     for (int i = 0; i < allUsers.Count; i++)
                     {
-                        if (userIdAsInt == allUsers[i].UserId)
+                        if (userIdAsInt == UserService.GetUserId())
                         {
-                            //ApiAccount senderAccount = new ApiAccount(apiService.GetAccount(UserService.GetUserId()).Balance);
-                            //ApiAccount recipientAccount = new ApiAccount(apiService.GetAccount(userIdAsInt).Balance);
+                            Console.WriteLine();
+                            Console.WriteLine("Recipient cannot be the same account as sender.");
+                            Console.WriteLine();
+                            break;
+                        }
+                        else if (userIdAsInt == allUsers[i].UserId)
+                        {
+                            Console.WriteLine();
                             Console.WriteLine("Please enter the amount you would like to send: ");
                             string amountResponse = Console.ReadLine();
                             decimal amountToTransfer = Convert.ToDecimal(amountResponse);
+                            if (apiService.GetAccountBalance(UserService.GetUserId()) - amountToTransfer < 0)
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine("Not enough funds to transfer.");
+                                Console.WriteLine();
+                                break;
+                            }
 
                             ApiTransfer newTransfer = new ApiTransfer(2, 2, apiService.GetAccountIdByUserId(UserService.GetUserId()), apiService.GetAccountIdByUserId(userIdAsInt), amountToTransfer);
                             apiService.PostNewTransferToDatabase(newTransfer);
-                            ////int lastTransfer = apiService.GetLatestTransfer(UserService.GetUserId()).TransferId;
 
                             apiService.UpdateAccounts(newTransfer);
-                            //apiService.UpdateRecipientAccount(newTransfer);
+
+                            Console.WriteLine();
+                            Console.WriteLine($"Current balance: ${apiService.GetAccountBalance(UserService.GetUserId())}");
+
                         }
-                        
                     }
                 }
                 else if (menuSelection == 6)

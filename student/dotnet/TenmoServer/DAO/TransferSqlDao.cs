@@ -10,8 +10,6 @@ namespace TenmoServer.DAO
     public class TransferSqlDao : ITransferDao
     {
         private readonly string connectionString;
-        //const decimal startingBalance = 1000;
-        //private static Transfer transfer;
         private readonly Account account;
 
         public TransferSqlDao(string dbConnectionString)
@@ -75,69 +73,6 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
-
-        //public void UpdateBalanceRecipient(int accountId)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
-
-        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
-        //                "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
-        //            cmd.Parameters.AddWithValue("@account_id", accountId);
-
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //    catch (SqlException)
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        //public void UpdateBalanceSender(Account account)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
-
-        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = " +
-        //                "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
-        //            cmd.Parameters.AddWithValue("@account_id", account.AccountId);
-
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //    catch (SqlException)
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        //public void UpdateBalanceRecipient(Account account)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
-
-        //            SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
-        //                "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
-        //            cmd.Parameters.AddWithValue("@account_id", account.AccountId);
-
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //    catch (SqlException)
-        //    {
-        //        throw;
-        //    }
-        //}
 
         public List<Transfer> GetTransfers()
         {

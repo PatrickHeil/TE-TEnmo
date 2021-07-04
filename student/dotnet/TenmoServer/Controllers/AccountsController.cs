@@ -44,27 +44,10 @@ namespace TenmoServer.Controllers
         }
 
 
-        [HttpPut("accounts/{transferId}")]
+        [HttpPut("accounts/{accountId}")]
         public void UpdateAccount(Transfer transfer)
         {
             transferDao.UpdateBalances(transfer);
-            //transferDao.UpdateBalanceRecipient(transfer.AccountTo);
         }
-
-        
-
-        //public AccountsController()
-        //{
-
-        //}
-
-        //[HttpGet("{userId}")]
-        //public decimal GetAccountBalance(int userId)
-        //{
-        //    //get account balance by input userId
-        //    decimal accountBalance = accountDao.GetBalance(userId);
-        //    return accountBalance;
-        //}
     }
-
 }

@@ -13,18 +13,17 @@ namespace TenmoServer.Controllers
     public class UserController : Controller
     {
         private IUserDao userDao;
-        private IAccountDao accountDao; //change made
+        private IAccountDao accountDao;
 
-        public UserController(IUserDao _userDao, IAccountDao accountDao) //change made
+        public UserController(IUserDao _userDao, IAccountDao accountDao)
         {
             this.userDao = _userDao;
-            this.accountDao = accountDao; //change made
+            this.accountDao = accountDao;
         }
 
         [HttpGet()]
         public List<User> GetUsersForMoneyTransfer()
         {
-            //Get list of all users in the database
             List<User> listOfAllUsers = userDao.GetUsersForMoneyTransfer();
             return listOfAllUsers;
         }

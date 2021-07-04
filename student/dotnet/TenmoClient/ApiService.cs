@@ -40,7 +40,6 @@ namespace TenmoClient
         {
             RestRequest request = new RestRequest(API_URL + "accounts/" + userId.ToString());
             IRestResponse<ApiAccount> response = restClient.Get<ApiAccount>(request);
-            //request.AddJsonBody(userId);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
@@ -56,7 +55,6 @@ namespace TenmoClient
         {
             RestRequest request = new RestRequest(API_URL + "accounts/" + userId.ToString());
             IRestResponse<ApiAccount> response = restClient.Get<ApiAccount>(request);
-            //request.AddJsonBody(userId);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
@@ -72,7 +70,6 @@ namespace TenmoClient
         {
             RestRequest request = new RestRequest(API_URL + "accounts/" + userId.ToString());
             IRestResponse<ApiAccount> response = restClient.Get<ApiAccount>(request);
-            //request.AddJsonBody(userId);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
@@ -131,18 +128,6 @@ namespace TenmoClient
             }
         }
 
-        //public void UpdateRecipientAccount(ApiTransfer transfer)
-        //{
-        //    RestRequest request = new RestRequest(API_URL + "accounts/" + transfer.AccountTo);
-        //    request.AddJsonBody(transfer);
-        //    IRestResponse<ApiAccount> response = restClient.Put<ApiAccount>(request);
-
-        //    if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
-        //    {
-        //        throw new Exception();
-        //    }
-        //}
-
         public void PostNewTransferToDatabase(ApiTransfer apiTransfer)
         {
             RestRequest request = new RestRequest(API_URL + "transfers/" + apiTransfer.TransferId.ToString());
@@ -154,8 +139,6 @@ namespace TenmoClient
                 throw new Exception();
             }        
         }
-
-
 
         public static int GetAccountId()
         {
