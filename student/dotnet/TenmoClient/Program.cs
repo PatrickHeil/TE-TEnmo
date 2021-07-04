@@ -92,7 +92,7 @@ namespace TenmoClient
                 {
                     decimal currentAccountBalance = apiService.GetAccount(UserService.GetUserId()).Balance;
                     Console.WriteLine();
-                    Console.WriteLine($"Your current account balance is: {currentAccountBalance}");
+                    Console.WriteLine($"Your current account balance is: ${currentAccountBalance}"); // writes current user's account balance
                     Console.WriteLine();
                 }
                 else if (menuSelection == 2)
@@ -104,7 +104,7 @@ namespace TenmoClient
                     for (int i = 0; i < pastTransfers.Count; i++)
                     {
                         Console.WriteLine($"Transfer Id: {pastTransfers[i].TransferId}, Transfer Type Id: {pastTransfers[i].TransferTypeId}, Transfer Status Id: {pastTransfers[i].TransferStatusId}, " + 
-                            $"Sender: {pastTransfers[i].AccountFrom}, Recipient: {pastTransfers[i].AccountTo}, Amount: {pastTransfers[i].Amount}");
+                            $"Sender: {pastTransfers[i].AccountFrom}, Recipient: {pastTransfers[i].AccountTo}, Amount: {pastTransfers[i].Amount}"); // displays details of all past transfers of current user
                     }
                 }
                 else if (menuSelection == 3)
@@ -113,13 +113,13 @@ namespace TenmoClient
                     Console.WriteLine();
                     int desiredTransferId = Convert.ToInt32(Console.ReadLine());
                     ApiTransfer desiredTransfer = apiService.GetTransferByTransferId(desiredTransferId);
-                    Console.WriteLine();
+                    Console.WriteLine();                                                                 // all of this displays the details of one particular transfer, based on transfer id
                     Console.WriteLine($"Transfer Id: {desiredTransfer.TransferId}");
                     Console.WriteLine($"Transfer Type Id: {desiredTransfer.TransferTypeId}");
                     Console.WriteLine($"Transfer Status Id: {desiredTransfer.TransferStatusId}");
                     Console.WriteLine($"Sender: {desiredTransfer.AccountFrom}");
                     Console.WriteLine($"Recipient: {desiredTransfer.AccountTo}");
-                    Console.WriteLine($"Amount: {desiredTransfer.Amount}");
+                    Console.WriteLine($"Amount: {desiredTransfer.Amount}"); 
                 }
                 else if (menuSelection == 4) 
                 {
@@ -130,17 +130,17 @@ namespace TenmoClient
                     List<User> allUsers = apiService.GetAllUsers();
                     for (int i = 0; i < allUsers.Count; i++)
                     {
-                        Console.WriteLine($"{allUsers[i].UserId}, {allUsers[i].Username}");
+                        Console.WriteLine($"{allUsers[i].UserId}, {allUsers[i].Username}"); // lists all users
                     }
                     Console.WriteLine();
-                    Console.WriteLine("Please select user by userId: ");
+                    Console.WriteLine("Please select recipient by userId: ");
                     string userId = Console.ReadLine();
-                    int userIdAsInt = Convert.ToInt32(userId);
+                    int userIdAsInt = Convert.ToInt32(userId); // recipient userId entered by current user
 
 
                     for (int i = 0; i < allUsers.Count; i++)
                     {
-                        if (userIdAsInt == UserService.GetUserId())
+                        if (userIdAsInt == UserService.GetUserId()) // in case current user enters their own id
                         {
                             Console.WriteLine();
                             Console.WriteLine("Recipient cannot be the same account as sender.");
@@ -153,7 +153,14 @@ namespace TenmoClient
                             Console.WriteLine("Please enter the amount you would like to send: ");
                             string amountResponse = Console.ReadLine();
                             decimal amountToTransfer = Convert.ToDecimal(amountResponse);
-                            if (apiService.GetAccountBalance(UserService.GetUserId()) - amountToTransfer < 0)
+                            if (amountToTransfer <= 0) // prevents user from transfering a negative number into another user's account (which would result in an exception, anyway)
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine("Transfer must be $0.01 or more.");
+                                Console.WriteLine();
+                                break;
+                            }
+                            if (apiService.GetAccountBalance(UserService.GetUserId()) - amountToTransfer < 0) // prevents current user from overdrafting account
                             {
                                 Console.WriteLine();
                                 Console.WriteLine("Not enough funds to transfer.");
@@ -161,13 +168,14 @@ namespace TenmoClient
                                 break;
                             }
 
-                            ApiTransfer newTransfer = new ApiTransfer(2, 2, apiService.GetAccountIdByUserId(UserService.GetUserId()), apiService.GetAccountIdByUserId(userIdAsInt), amountToTransfer);
-                            apiService.PostNewTransferToDatabase(newTransfer);
+                            ApiTransfer newTransfer = new ApiTransfer(2, 2, apiService.GetAccountIdByUserId(UserService.GetUserId()), 
+                                apiService.GetAccountIdByUserId(userIdAsInt), amountToTransfer); // instantiates new transfer based off input thus far, with default values for status/type id
+                            apiService.PostNewTransferToDatabase(newTransfer); // posts transfer to transfer table in database
 
-                            apiService.UpdateAccounts(newTransfer);
+                            apiService.UpdateAccounts(newTransfer); // updates sender and recipient accounts to new balances based off transfer information
 
                             Console.WriteLine();
-                            Console.WriteLine($"Current balance: ${apiService.GetAccountBalance(UserService.GetUserId())}");
+                            Console.WriteLine($"Current balance: ${apiService.GetAccountBalance(UserService.GetUserId())}"); // display balance of current user after transfer
 
                         }
                     }

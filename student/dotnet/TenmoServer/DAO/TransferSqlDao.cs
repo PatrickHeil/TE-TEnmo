@@ -22,7 +22,7 @@ namespace TenmoServer.DAO
             this.account = account;
         }
 
-        public void Transfer(Transfer transfer)
+        public void Transfer(Transfer transfer) // writes a transfer to the database
         {
             try
             {
@@ -47,7 +47,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalances(Transfer transfer)
+        public void UpdateBalances(Transfer transfer) // updates sender and recipient balances based off transfer information -- line 48, AccountsController
         {
             try
             {
@@ -74,7 +74,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public List<Transfer> GetTransfers()
+        public List<Transfer> GetTransfers() // list all transfers
         {
             List<Transfer> transferList = new List<Transfer>();
             try
@@ -101,7 +101,7 @@ namespace TenmoServer.DAO
         }
 
 
-        public List<Transfer> GetTransfersOfUser(int userId)
+        public List<Transfer> GetTransfersOfUser(int userId) // list all transfers of a particular user
         {
             List<Transfer> transferList = new List<Transfer>();
             try
@@ -130,44 +130,7 @@ namespace TenmoServer.DAO
             return transferList;
         }
 
-        public Transfer GetLastTransferOfUser(int userId)
-        {
-            List<Transfer> transferList = new List<Transfer>();
-            Transfer transfer = new Transfer();
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd = new SqlCommand("SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
-                        "FROM dbo.transfers JOIN accounts ON accounts.account_id = transfers.account_from " +
-                                "WHERE user_id = @userId", conn);
-                    cmd.Parameters.AddWithValue("@userId", userId);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        transferList.Add(GetTransferFromReader(reader));
-                    }
-                    for (int i = 0; i < transferList.Count; i++)
-                    {
-                        if (i == transferList.Count - 1)
-                        {
-                            transfer = transferList[i];
-                        }
-                    }
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-            return transfer;
-        }
-
-        public Transfer GetTransferByTransferId(int transferId)
+        public Transfer GetTransferByTransferId(int transferId) // get details of transfer by transferId
         {
             Transfer desiredTransfer = new Transfer();
             try

@@ -23,21 +23,21 @@ namespace TenmoServer.Controllers
         }
 
         [HttpGet]
-        public List<Account> GetAccounts()
+        public List<Account> GetAccounts() // display all accounts
         {
             List<Account> accounts = accountDao.GetAccounts();
             return accounts;
         }
 
         [HttpGet("accounts/{userId}")]
-        public Account GetAccountByUserId(int userId)
+        public Account GetAccountByUserId(int userId) // display one account based on userId
         {
             Account account = accountDao.GetAccount(userId);
             return account;
         }
 
         [HttpGet("accounts/account{accountId}")]
-        public Account GetAccountByAccountId(int accountId)
+        public Account GetAccountByAccountId(int accountId) // display one account based on accountId
         {
             Account account = accountDao.GetAccount(accountId);
             return account;
@@ -45,7 +45,7 @@ namespace TenmoServer.Controllers
 
 
         [HttpPut("accounts/{accountId}")]
-        public void UpdateAccount(Transfer transfer)
+        public void UpdateAccount(Transfer transfer) // updates sender and recipient accounts based on the transfer (line 119 in Api Services, client side)
         {
             transferDao.UpdateBalances(transfer);
         }

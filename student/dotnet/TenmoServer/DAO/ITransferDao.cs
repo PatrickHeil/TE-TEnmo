@@ -13,6 +13,6 @@ namespace TenmoServer.DAO
         public List<Transfer> GetTransfersOfUser(int userId);
         public void UpdateBalances(Transfer transfer);
         public List<Transfer> GetTransfers();
-        public Transfer GetLastTransferOfUser(int userId);
+
     }
 }

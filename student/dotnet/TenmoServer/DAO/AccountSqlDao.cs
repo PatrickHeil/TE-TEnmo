@@ -17,7 +17,7 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public Account GetAccount(int userId)
+        public Account GetAccount(int userId) // get details of a single account based on userId
         {
             Account account = new Account();
 
@@ -45,7 +45,7 @@ namespace TenmoServer.DAO
             return account;
         }
 
-        public List<Account> GetAccounts()
+        public List<Account> GetAccounts() // get list of accounts
         {
             List<Account> accounts = new List<Account>();
 
