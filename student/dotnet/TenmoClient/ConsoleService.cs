@@ -13,11 +13,18 @@ namespace TenmoClient
         /// <returns>ID of transfers to view, approve, or reject</returns>
         public int PromptForTransferID(string action)
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("");
             Console.Write("Please enter transfer ID to " + action + " (0 to cancel): ");
+            Console.ForegroundColor = ConsoleColor.White;
             if (!int.TryParse(Console.ReadLine(), out int auctionId))
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine();
+                Console.WriteLine("ERROR:");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Invalid input. Only input a number.");
+                Console.ForegroundColor = ConsoleColor.White;
                 return 0;
             }
             else
@@ -28,9 +35,13 @@ namespace TenmoClient
 
         public LoginUser PromptForLogin()
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Username: ");
+            Console.ForegroundColor = ConsoleColor.White;
             string username = Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
             string password = GetPasswordFromConsole("Password: ");
+            Console.ForegroundColor = ConsoleColor.White;
 
             LoginUser loginUser = new LoginUser
             {
@@ -54,6 +65,7 @@ namespace TenmoClient
                 if (!char.IsControl(key.KeyChar))
                 {
                     pass += key.KeyChar;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.Write("*");
                 }
                 else

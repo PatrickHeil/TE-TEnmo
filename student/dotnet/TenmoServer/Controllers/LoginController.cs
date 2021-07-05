@@ -53,6 +53,7 @@ namespace TenmoServer.Controllers
             User existingUser = userDao.GetUser(userParam.Username);
             if (existingUser != null)
             {
+                
                 return Conflict(new { message = "Username already taken. Please choose a different username." });
             }
 

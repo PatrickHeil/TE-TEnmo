@@ -65,3 +65,15 @@ INSERT INTO transfer_statuses (transfer_status_desc) VALUES ('Rejected');
 
 INSERT INTO transfer_types (transfer_type_desc) VALUES ('Request');
 INSERT INTO transfer_types (transfer_type_desc) VALUES ('Send');
+
+SELECT * FROM accounts
+SELECT * FROM users
+SELECT * FROM transfers
+
+INSERT INTO dbo.transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) 
+VALUES(2, 2, 2001, 2002, 100)
+
+UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = (SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) 
+WHERE account_id = '2001'
+UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = (SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) 
+WHERE account_id = '2002'
