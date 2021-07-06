@@ -9,71 +9,42 @@ using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("transfers/")]
     [ApiController]
     public class TransfersController : Controller
     {
         private ITransferDao transferDao;
-        //private IAccountDao accountDao;
 
-        public TransfersController(ITransferDao _transferDao/*, IAccountDao _accountDao*/)
+        public TransfersController(ITransferDao _transferDao)
         {
             this.transferDao = _transferDao;
-            //this.accountDao = _accountDao;
         }
 
         [HttpGet]
-        public List<Transfer> GetTransfers()
+        public List<Transfer> GetTransfers() // list all transfers
         {
             List<Transfer> listOfTransfers = transferDao.GetTransfers();
             return listOfTransfers;
         }
 
         [HttpGet("user{userId}")]
-        public List<Transfer> GetTransfersOfUser(int userId)
+        public List<Transfer> GetTransfersOfUser(int userId) // list one user's transfers
         {
             List<Transfer> listOfTransfers = transferDao.GetTransfersOfUser(userId);
             return listOfTransfers;
         }
 
         [HttpGet("transfer{transferId}")]
-        public Transfer GetTransferByTransferId(int transferId)
+        public Transfer GetTransferByTransferId(int transferId) // get details of one transfer based on transferId
         {
             Transfer desiredTransfer = transferDao.GetTransferByTransferId(transferId);
             return desiredTransfer;
         }
 
         [HttpPost("{accountFrom}")]
-        public void CreateTransfer(Transfer transfer)
+        public void CreateTransfer(Transfer transfer) // create a new transfer
         {
             transferDao.Transfer(transfer);
         }
-
-        //[HttpPut("{userId}")]
-        //public void UpdateAccount(Account account)
-        //{
-        //    transferDao.UpdateBalanceSender(account);
-        //}
-
-        //[HttpPut("{userId}")]
-        //public void UpdateAccount(Transfer transfer, Account account)
-        //{
-        //    if(transfer.TransferStatusId == 2)
-        //    {
-        //        if(transfer.AccountFrom == account.AccountId)
-        //        {
-        //            transferDao.UpdateBalanceSender(account);
-        //        }            
-        //    }
-        //    else if(transfer.TransferStatusId == 1)
-        //    {
-        //        if(transfer.AccountTo == account.AccountId)
-        //        {
-        //            transferDao.UpdateBalanceRecipient(account);
-        //        }
-        //    }
-        //}
-
-
     }
 }

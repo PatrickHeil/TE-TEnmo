@@ -11,8 +11,8 @@ namespace TenmoServer.DAO
         public void Transfer(Transfer transfer);
         public Transfer GetTransferByTransferId(int transferId);
         public List<Transfer> GetTransfersOfUser(int userId);
-        public void UpdateBalanceSender(Account account);
-        public void UpdateBalanceRecipient(Account account);
+        public void UpdateBalances(Transfer transfer);
         public List<Transfer> GetTransfers();
+
     }
 }

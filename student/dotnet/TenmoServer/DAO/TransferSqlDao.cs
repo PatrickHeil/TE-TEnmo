@@ -10,10 +10,8 @@ namespace TenmoServer.DAO
     public class TransferSqlDao : ITransferDao
     {
         private readonly string connectionString;
-        //const decimal startingBalance = 1000;
-        //private static Transfer transfer;
         private readonly Account account;
-        
+
         public TransferSqlDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
@@ -24,7 +22,7 @@ namespace TenmoServer.DAO
             this.account = account;
         }
 
-        public void Transfer(Transfer transfer)
+        public void Transfer(Transfer transfer) // writes a transfer to the database
         {
             try
             {
@@ -49,7 +47,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceSender(Account account)
+        public void UpdateBalances(Transfer transfer) // updates sender and recipient balances based off transfer information -- line 48, AccountsController
         {
             try
             {
@@ -57,11 +55,17 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
-                        "WHERE account_id = @account_id", conn);
-                    cmd.Parameters.AddWithValue("@account_id", account.AccountId);
+                    SqlCommand send = new SqlCommand("UPDATE dbo.accounts SET balance -= (SELECT amount FROM transfers WHERE transfer_id = " +
+                        "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+                    send.Parameters.AddWithValue("@account_id", transfer.AccountFrom);
 
-                    cmd.ExecuteNonQuery();
+                    send.ExecuteNonQuery();
+
+                    SqlCommand receive = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = " +
+                        "(SELECT TOP 1 transfer_id FROM transfers ORDER BY transfer_id DESC)) WHERE account_id = @account_id", conn);
+                    receive.Parameters.AddWithValue("@account_id", transfer.AccountTo);
+
+                    receive.ExecuteNonQuery();
                 }
             }
             catch (SqlException)
@@ -70,28 +74,7 @@ namespace TenmoServer.DAO
             }
         }
 
-        public void UpdateBalanceRecipient(Account account)
-        {
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd = new SqlCommand("UPDATE dbo.accounts SET balance += (SELECT amount FROM transfers WHERE transfer_id = @@IDENTITY) " +
-                        "WHERE account_id = @account_id", conn);
-                    cmd.Parameters.AddWithValue("@account_id", account.AccountId);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (SqlException)
-            {
-                throw;
-            }
-        }
-
-        public List<Transfer> GetTransfers()
+        public List<Transfer> GetTransfers() // list all transfers
         {
             List<Transfer> transferList = new List<Transfer>();
             try
@@ -117,7 +100,8 @@ namespace TenmoServer.DAO
             return transferList;
         }
 
-        public List<Transfer> GetTransfersOfUser(int userId)
+
+        public List<Transfer> GetTransfersOfUser(int userId) // list all transfers of a particular user
         {
             List<Transfer> transferList = new List<Transfer>();
             try
@@ -146,7 +130,7 @@ namespace TenmoServer.DAO
             return transferList;
         }
 
-        public Transfer GetTransferByTransferId(int transferId)
+        public Transfer GetTransferByTransferId(int transferId) // get details of transfer by transferId
         {
             Transfer desiredTransfer = new Transfer();
             try
@@ -189,4 +173,3 @@ namespace TenmoServer.DAO
         }
     }
 }
-    

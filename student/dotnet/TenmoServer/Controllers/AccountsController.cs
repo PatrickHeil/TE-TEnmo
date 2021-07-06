@@ -9,7 +9,7 @@ using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("/")]
     [ApiController]
     public class AccountsController : Controller
     {
@@ -23,45 +23,31 @@ namespace TenmoServer.Controllers
         }
 
         [HttpGet]
-        public List<Account> GetAccounts()
+        public List<Account> GetAccounts() // display all accounts
         {
             List<Account> accounts = accountDao.GetAccounts();
             return accounts;
         }
 
-        [HttpGet("{userId}")]
-        public Account GetAccountByUserId(int userId)
+        [HttpGet("accounts/{userId}")]
+        public Account GetAccountByUserId(int userId) // display one account based on userId
         {
             Account account = accountDao.GetAccount(userId);
             return account;
         }
 
-        [HttpGet("{accountId}")]
-        public Account GetAccountByAccountId(int accountId)
+        [HttpGet("accounts/account{accountId}")]
+        public Account GetAccountByAccountId(int accountId) // display one account based on accountId
         {
             Account account = accountDao.GetAccount(accountId);
             return account;
         }
 
 
-        [HttpPut("{accountId}")]
-        public void UpdateAccount(Account account)
+        [HttpPut("accounts/{accountId}")]
+        public void UpdateAccount(Transfer transfer) // updates sender and recipient accounts based on the transfer (line 119 in Api Services, client side)
         {
-            transferDao.UpdateBalanceSender(account);
+            transferDao.UpdateBalances(transfer);
         }
-
-        //public AccountsController()
-        //{
-
-        //}
-
-        //[HttpGet("{userId}")]
-        //public decimal GetAccountBalance(int userId)
-        //{
-        //    //get account balance by input userId
-        //    decimal accountBalance = accountDao.GetBalance(userId);
-        //    return accountBalance;
-        //}
     }
-
 }
