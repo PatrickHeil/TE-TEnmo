@@ -53,7 +53,7 @@ namespace TenmoClient
                         }
                     }
                 }
-                else if (loginRegister == 2)
+                else if (loginRegister == 2)1
                 {
                     bool isRegistered = false;
                     while (!isRegistered) //will keep looping until user is registered
@@ -129,11 +129,11 @@ namespace TenmoClient
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     List<ApiTransfer> pastTransfers = apiService.GetTransfersOfUser(UserService.GetUserId());
                     Console.WriteLine();
-                    Console.WriteLine("List of All Transfers for current user:");
+                    Console.WriteLine("List of All Transfers for current user:"); 
                     Console.WriteLine();
                     for (int i = 0; i < pastTransfers.Count; i++)
                     {
-                        if (i % 2 == 1)
+                        if (i % 2 == 1) // odd lines written in cyan, even lines written in white for legibility
                         {
                             Console.ForegroundColor = ConsoleColor.Cyan;
                             Console.WriteLine($"Transfer Id: {pastTransfers[i].TransferId}, Transfer Type Id: {pastTransfers[i].TransferTypeId}, Transfer Status Id: {pastTransfers[i].TransferStatusId}, " +
@@ -167,8 +167,8 @@ namespace TenmoClient
                         {
                             if (pastTransfers[i].TransferId == desiredTransfer.TransferId)
                             {
-                                Console.WriteLine();    // all of this displays the details of one particular transfer, based on transfer id
-                                Console.Write("Transfer Id: "); Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine();    // all of this displays the details of one particular transfer, based on transfer id 
+                                Console.Write("Transfer Id: "); Console.ForegroundColor = ConsoleColor.White;       
                                 Console.WriteLine($"{desiredTransfer.TransferId}"); Console.ForegroundColor = ConsoleColor.Cyan;
                                 Console.Write("Transfer Type Id: "); Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine($"{desiredTransfer.TransferTypeId}"); Console.ForegroundColor = ConsoleColor.Cyan;
@@ -227,68 +227,75 @@ namespace TenmoClient
 
                     for (int i = 0; i < allUsers.Count; i++)
                     {
-                        if (userIdAsInt == UserService.GetUserId()) // in case current user enters their own id
+                        try
+                        {
+                            if (userIdAsInt == UserService.GetUserId()) // in case current user enters their own id
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine();
+                                Console.WriteLine("ERROR:");
+
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine("Recipient cannot be the same account as sender.");
+                                Console.WriteLine();
+                                break;
+                            }
+                            else if (userIdAsInt == allUsers[i].UserId)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine();
+                                Console.Write("Please enter the amount you would like to send: ");
+
+                                Console.ForegroundColor = ConsoleColor.White;
+                                string amountResponse = Console.ReadLine();
+                                decimal amountToTransfer = Convert.ToDecimal(amountResponse);
+                                if (amountToTransfer <= 0) // prevents user from transfering a negative number into another user's account (which would result in an exception, anyway)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine();
+                                    Console.WriteLine("ERROR:");
+
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine("Transfer must be $0.01 or more.");
+                                    Console.WriteLine();
+                                    break;
+                                }
+                                if (apiService.GetAccountBalance(UserService.GetUserId()) - amountToTransfer < 0) // prevents current user from overdrafting account
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine();
+                                    Console.WriteLine("ERROR:");
+
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine("Not enough funds to transfer.");
+                                    Console.WriteLine();
+                                    break;
+                                }
+
+                                ApiTransfer newTransfer = new ApiTransfer(2, 2, apiService.GetAccountIdByUserId(UserService.GetUserId()),
+                                    apiService.GetAccountIdByUserId(userIdAsInt), amountToTransfer); // instantiates new transfer based off input thus far, with default values for status/type id
+                                apiService.PostNewTransferToDatabase(newTransfer); // posts transfer to transfer table in database
+
+                                apiService.UpdateAccounts(newTransfer); // updates sender and recipient accounts to new balances based off transfer information
+
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine();
+                                Console.Write($"Current balance: ");
+
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine($"${apiService.GetAccountBalance(UserService.GetUserId())}"); // display balance of current user after transfer
+                                Console.ReadLine();
+                            }
+                        }
+                        catch // not working yet -- will figure out
                         {
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine();
                             Console.WriteLine("ERROR:");
 
                             Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine("Recipient cannot be the same account as sender.");
+                            Console.WriteLine("Please enter a valid user Id.");
                             Console.WriteLine();
-
-                            Console.ForegroundColor = ConsoleColor.White;
-                            break;
-                        }
-                        else if (userIdAsInt == allUsers[i].UserId)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine();
-                            Console.Write("Please enter the amount you would like to send: ");
-
-                            Console.ForegroundColor = ConsoleColor.White;
-                            string amountResponse = Console.ReadLine();
-                            decimal amountToTransfer = Convert.ToDecimal(amountResponse);
-                            if (amountToTransfer <= 0) // prevents user from transfering a negative number into another user's account (which would result in an exception, anyway)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine();
-                                Console.WriteLine("ERROR:");
-
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine("Transfer must be $0.01 or more.");
-                                Console.WriteLine();
-
-                                Console.ForegroundColor = ConsoleColor.White;
-                                break;
-                            }
-                            if (apiService.GetAccountBalance(UserService.GetUserId()) - amountToTransfer < 0) // prevents current user from overdrafting account
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine();
-                                Console.WriteLine("ERROR:");
-
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine("Not enough funds to transfer.");
-                                Console.WriteLine();
-
-                                Console.ForegroundColor = ConsoleColor.White;
-                                break;
-                            }
-
-                            ApiTransfer newTransfer = new ApiTransfer(2, 2, apiService.GetAccountIdByUserId(UserService.GetUserId()),
-                                apiService.GetAccountIdByUserId(userIdAsInt), amountToTransfer); // instantiates new transfer based off input thus far, with default values for status/type id
-                            apiService.PostNewTransferToDatabase(newTransfer); // posts transfer to transfer table in database
-
-                            apiService.UpdateAccounts(newTransfer); // updates sender and recipient accounts to new balances based off transfer information
-
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine();
-                            Console.Write($"Current balance: ");
-
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine($"{apiService.GetAccountBalance(UserService.GetUserId())}"); // display balance of current user after transfer
-                            Console.ReadLine();
                         }
                     }
                 }
