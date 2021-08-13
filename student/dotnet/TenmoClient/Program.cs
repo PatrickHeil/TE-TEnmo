@@ -53,7 +53,7 @@ namespace TenmoClient
                         }
                     }
                 }
-                else if (loginRegister == 2)1
+                else if (loginRegister == 2)
                 {
                     bool isRegistered = false;
                     while (!isRegistered) //will keep looping until user is registered
